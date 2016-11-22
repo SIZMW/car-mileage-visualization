@@ -1,3 +1,19 @@
 body {
   font-family: Roboto;
 }
+
+div.tooltip {
+  font-size: 1em;
+  position: absolute;
+  z-index: 5;
+  pointer-events: none;
+  border-radius: 3px;
+  text-align: middle;
+  opacity: 0;
+  background: rgba(200,200,200,0.75);
+  padding-left: 0.125em;
+  padding-right: 0.125em;
+  padding-top: 0.125em;
+  padding-bottom: 0.125em;
+  visibility: visible;
+}
