@@ -1,7 +1,7 @@
 // Margin amounts
 var margin = {
   top: 20,
-  right: 20,
+  right: 80,
   bottom: 40,
   left: 50
 };
@@ -220,6 +220,28 @@ function loadTSV() {
         .on('mouseout', function(d) {
           tooltipMouseOut(d);
         });
+
+      svg.append('text')
+        .classed('legend-item', true)
+        .datum(data[data.length - 1])
+        .attr('transform', function(d) {
+          return 'translate(' + timeScale(new Date(d.date)) + ',' + milesScale(d.mileage) + ')';
+        })
+        .attr('x', -10)
+        .attr('y', -10)
+        .attr('alignment-baseline', 'middle')
+        .text('Mileage');
+
+      svg.append('text')
+        .classed('legend-item', true)
+        .datum(data[data.length - 1])
+        .attr('transform', function(d) {
+          return 'translate(' + timeScale(new Date(d.date)) + ',' + milesScale(d.milesRemaining + d.mileage) + ')';
+        })
+        .attr('x', -18)
+        .attr('y', -10)
+        .attr('alignment-baseline', 'middle')
+        .text('Potential Miles');
     }
 
     function loadAverageMPGChart(data) {

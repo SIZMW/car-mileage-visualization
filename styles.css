@@ -11,6 +11,10 @@ body {
   fill: black;
 }
 
+.legend-item {
+  font-size: 10px;
+}
+
 div.tooltip {
   font-size: 1em;
   position: absolute;
