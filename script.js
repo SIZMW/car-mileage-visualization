@@ -2,7 +2,7 @@
 var margin = {
   top: 20,
   right: 80,
-  bottom: 40,
+  bottom: 60,
   left: 50
 };
 
@@ -59,7 +59,7 @@ function loadTSV() {
 
       // Scales
       var timeScale = d3.scaleTime()
-        .domain([d3.timeDay.offset(new Date(data[0].date), -3), d3.timeDay.offset(new Date(data[data.length - 1].date), 1)])
+        .domain([d3.timeMonth.offset(new Date(data[0].date), -1), d3.timeMonth.offset(new Date(data[data.length - 1].date), 1)])
         .rangeRound([margin.left, canvasWidth - margin.right]);
 
       var milesScale = d3.scaleLinear()
@@ -140,7 +140,7 @@ function loadTSV() {
         .append('text')
         .classed('label', true)
         .attr('x', canvasWidth / 2)
-        .attr('y', canvasHeight - margin.top / 2)
+        .attr('y', canvasHeight - margin.top / 2 + 5)
         .attr('text-anchor', 'middle')
         .text('Date');
 
@@ -156,7 +156,11 @@ function loadTSV() {
         .classed('dots', true);
 
       svg.select('.x-axis')
-        .call(xAxis);
+        .call(xAxis)
+        .selectAll('text')
+        .attr('x', -25)
+        .attr('y', 5)
+        .attr('transform', 'rotate(-45, 0, 0)');
 
       svg.select('.y-axis')
         .call(yAxis);
@@ -253,7 +257,7 @@ function loadTSV() {
       var colorScale = d3.scaleOrdinal(d3.schemeCategory20);
 
       var timeScale = d3.scaleTime()
-        .domain([d3.timeDay.offset(new Date(data[0].date), -5), d3.timeDay.offset(new Date(data[data.length - 1].date), 5)])
+        .domain([d3.timeMonth.offset(new Date(data[0].date), -1), d3.timeMonth.offset(new Date(data[data.length - 1].date), 1)])
         .rangeRound([margin.left, canvasWidth - margin.right]);
 
       var avgMPGScale = d3.scaleLinear()
@@ -280,7 +284,11 @@ function loadTSV() {
         .attr('transform', 'translate(' + margin.left + ',0)');
 
       svg.select('.x-axis')
-        .call(xAxis);
+        .call(xAxis)
+        .selectAll('text')
+        .attr('x', -25)
+        .attr('y', 5)
+        .attr('transform', 'rotate(-45, 0, 0)');
 
       svg.select('.y-axis')
         .call(yAxis);
@@ -289,7 +297,7 @@ function loadTSV() {
         .append('text')
         .classed('label', true)
         .attr('x', canvasWidth / 2)
-        .attr('y', canvasHeight - margin.top / 2)
+        .attr('y', canvasHeight - margin.top / 2 + 5)
         .attr('text-anchor', 'middle')
         .text('Date');
 
@@ -351,23 +359,23 @@ function loadTSV() {
     }
 
     function tooltipRemainingMilesLineMouseOver(d) {
-      tooltipMouseOver(d, d.mileage + ' + ' + d.milesRemaining + ' = ' + (d.milesRemaining + d.mileage));
+      tooltipMouseOver(d, '[' + d.date + ']: ' + d.mileage + ' + ' + d.milesRemaining + ' = ' + (d.milesRemaining + d.mileage));
     }
 
     function tooltipMileageLineMouseMove(d) {
-      tooltipMouseMove(d, d.mileage);
+      tooltipMouseMove(d, '[' + d.date + ']: ' + d.mileage);
     }
 
     function tooltipRemainingMilesLineMouseMove(d) {
-      tooltipMouseMove(d, d.mileage + ' + ' + d.milesRemaining + ' = ' + (d.milesRemaining + d.mileage));
+      tooltipMouseMove(d, '[' + d.date + ']: ' + d.mileage + ' + ' + d.milesRemaining + ' = ' + (d.milesRemaining + d.mileage));
     }
 
     function tooltipAvgMPGMouseOver(d) {
-      tooltipMouseOver(d, d.mpg + ' mpg');
+      tooltipMouseOver(d, '[' + d.date + ']: ' + d.mpg + ' mpg');
     }
 
     function tooltipAvgMPGMouseMove(d) {
-      tooltipMouseMove(d, d.mpg + ' mpg');
+      tooltipMouseMove(d, '[' + d.date + ']: ' + d.mpg + ' mpg');
     }
 
     function tooltipMouseOver(d, text) {
