@@ -239,7 +239,7 @@ function loadTSV() {
           return d.mpg;
         })))), (Math.floor(d3.max(data.map(function(d) {
           return d.mpg;
-        })) / 10) + 1) * 10])
+        })))) + 3])
         .range([canvasHeight - margin.bottom, margin.top]);
 
       var xAxis = d3.axisBottom()
@@ -341,11 +341,11 @@ function loadTSV() {
     }
 
     function tooltipAvgMPGMouseOver(d) {
-      tooltipMouseOver(d, d.date + ': ' + d.mpg + ' mpg');
+      tooltipMouseOver(d, d.mpg + ' mpg');
     }
 
     function tooltipAvgMPGMouseMove(d) {
-      tooltipMouseMove(d, d.date + ': ' + d.mpg + ' mpg');
+      tooltipMouseMove(d, d.mpg + ' mpg');
     }
 
     function tooltipMouseOver(d, text) {
