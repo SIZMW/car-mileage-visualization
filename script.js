@@ -1,13 +1,13 @@
 // Margin amounts
 var margin = {
-  top: 10,
+  top: 20,
   right: 20,
-  bottom: 30,
-  left: 40
+  bottom: 40,
+  left: 50
 };
 
 // Canvas size
-var canvasWidth = 1000;
+var canvasWidth = 600;
 var canvasHeight = 500;
 
 // Tooltip
@@ -26,7 +26,7 @@ function loadTSV() {
     var milesRemaining = +d['Miles Remaining'];
 
     var pricePerMile = (gallonsFilled * pricePerGallon) / mileage;
-    var gasUtilization = mileage / (mileage + milesRemaining) * 100;
+    var gasUtilization = mileage / (mileage + milesRemaining);
 
     return {
       date: d['Date'],
@@ -50,7 +50,7 @@ function loadTSV() {
      * @param data The data for the chart.
      */
     function loadMileageLineChart(data) {
-      var svg = d3.select('#canvas')
+      var svg = d3.select('#mileage-canvas')
         .attr('width', canvasWidth)
         .attr('height', canvasHeight);
 
@@ -63,10 +63,11 @@ function loadTSV() {
         .rangeRound([margin.left, canvasWidth - margin.right]);
 
       var milesScale = d3.scaleLinear()
-        .domain([0, d3.max(data.map(function(d) {
+        .domain([0, Math.floor((d3.max(data.map(function(d) {
           return d.mileage + d.milesRemaining;
-        }))])
+        })) / 10) + 1) * 10 + 100])
         .range([canvasHeight - margin.bottom, margin.top]);
+      console.log(milesScale.domain())
 
       var colorScale = d3.scaleOrdinal(d3.schemeCategory10);
 
@@ -91,7 +92,7 @@ function loadTSV() {
       // Axes
       var xAxis = d3.axisBottom()
         .scale(timeScale)
-        .tickFormat(d3.timeFormat('%m/%d'));
+        .tickFormat(d3.timeFormat('%Y/%m'));
 
       var yAxis = d3.axisLeft()
         .scale(milesScale);
@@ -135,6 +136,22 @@ function loadTSV() {
         .attr('class', 'y-axis')
         .attr('transform', 'translate(' + margin.left + ',0)');
 
+      svg
+        .append('text')
+        .classed('label', true)
+        .attr('x', canvasWidth / 2)
+        .attr('y', canvasHeight - margin.top / 2)
+        .attr('text-anchor', 'middle')
+        .text('Date');
+
+      svg.append('text')
+        .classed('label', true)
+        .attr('x', -canvasHeight / 2)
+        .attr('y', 15)
+        .attr('text-anchor', 'middle')
+        .attr('transform', 'rotate(-90, 0, 0)')
+        .text('Miles Driven');
+
       svg.append('g')
         .classed('dots', true);
 
@@ -143,6 +160,14 @@ function loadTSV() {
 
       svg.select('.y-axis')
         .call(yAxis);
+
+      svg
+        .append('text')
+        .classed('chart-title', true)
+        .attr('x', canvasWidth / 2)
+        .attr('y', margin.bottom)
+        .attr('text-anchor', 'middle')
+        .text('Miles Before Fillup vs. Potential Drivable Miles');
 
       // Add dots
       var dataDots = svg.select('.dots')
@@ -197,6 +222,108 @@ function loadTSV() {
         });
     }
 
+    function loadAverageMPGChart(data) {
+      var svg = d3.select('#avg-canvas')
+        .attr('width', canvasWidth)
+        .attr('height', canvasHeight);
+
+      var barWidth = 10;
+      var colorScale = d3.scaleOrdinal(d3.schemeCategory20);
+
+      var timeScale = d3.scaleTime()
+        .domain([d3.timeDay.offset(new Date(data[0].date), -5), d3.timeDay.offset(new Date(data[data.length - 1].date), 5)])
+        .rangeRound([margin.left, canvasWidth - margin.right]);
+
+      var avgMPGScale = d3.scaleLinear()
+        .domain([(Math.floor(d3.min(data.map(function(d) {
+          return d.mpg;
+        })))), (Math.floor(d3.max(data.map(function(d) {
+          return d.mpg;
+        })) / 10) + 1) * 10])
+        .range([canvasHeight - margin.bottom, margin.top]);
+
+      var xAxis = d3.axisBottom()
+        .scale(timeScale)
+        .tickFormat(d3.timeFormat('%Y/%m'));
+
+      var yAxis = d3.axisLeft()
+        .scale(avgMPGScale);
+
+      svg.append('g')
+        .attr('class', 'x-axis')
+        .attr('transform', 'translate(0,' + (canvasHeight - margin.bottom) + ')');
+
+      svg.append('g')
+        .attr('class', 'y-axis')
+        .attr('transform', 'translate(' + margin.left + ',0)');
+
+      svg.select('.x-axis')
+        .call(xAxis);
+
+      svg.select('.y-axis')
+        .call(yAxis);
+
+      svg
+        .append('text')
+        .classed('label', true)
+        .attr('x', canvasWidth / 2)
+        .attr('y', canvasHeight - margin.top / 2)
+        .attr('text-anchor', 'middle')
+        .text('Date');
+
+      svg.append('text')
+        .classed('label', true)
+        .attr('x', -canvasHeight / 2)
+        .attr('y', 10)
+        .attr('text-anchor', 'middle')
+        .attr('transform', 'rotate(-90, 0, 0)')
+        .text('Miles Per Gallon');
+
+      svg
+        .append('text')
+        .classed('chart-title', true)
+        .attr('x', canvasWidth / 2)
+        .attr('y', margin.bottom)
+        .attr('text-anchor', 'middle')
+        .text('Average Mileage Between Fillups');
+
+      var barGroup = svg
+        .append('g')
+        .classed('bars', true);
+
+      var bars = barGroup.selectAll('.bar')
+        .data(data)
+        .enter()
+        .append('g')
+        .classed('bar', true);
+
+      bars.append('rect')
+        .attr('x', function(d) {
+          return timeScale(new Date(d.date)) - (barWidth / 2);
+        })
+        .attr('y', function(d) {
+          return avgMPGScale(d.mpg);
+        })
+        .attr('height', function(d) {
+          return canvasHeight - avgMPGScale(d.mpg) - margin.bottom;
+        })
+        .attr('width', function(d) {
+          return barWidth;
+        })
+        .attr('fill', function(d, i) {
+          return colorScale(i % 20);
+        })
+        .on('mouseover', function(d) {
+          tooltipAvgMPGMouseOver(d);
+        })
+        .on('mousemove', function(d) {
+          tooltipAvgMPGMouseMove(d);
+        })
+        .on('mouseout', function(d) {
+          tooltipMouseOut(d);
+        });
+    }
+
     function tooltipMileageLineMouseOver(d) {
       tooltipMouseOver(d, d.mileage);
     }
@@ -211,6 +338,14 @@ function loadTSV() {
 
     function tooltipRemainingMilesLineMouseMove(d) {
       tooltipMouseMove(d, d.mileage + ' + ' + d.milesRemaining + ' = ' + (d.milesRemaining + d.mileage));
+    }
+
+    function tooltipAvgMPGMouseOver(d) {
+      tooltipMouseOver(d, d.date + ': ' + d.mpg + ' mpg');
+    }
+
+    function tooltipAvgMPGMouseMove(d) {
+      tooltipMouseMove(d, d.date + ': ' + d.mpg + ' mpg');
     }
 
     function tooltipMouseOver(d, text) {
@@ -239,6 +374,7 @@ function loadTSV() {
     }
 
     loadMileageLineChart(data);
+    loadAverageMPGChart(data);
   });
 }
 
