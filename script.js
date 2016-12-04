@@ -54,6 +54,7 @@ function loadTSV() {
         .attr('width', canvasWidth)
         .attr('height', canvasHeight);
 
+      // Indices for ordinal colors
       var milesColorIndex = 0;
       var remainingMilesColorIndex = 1;
 
@@ -68,6 +69,7 @@ function loadTSV() {
         })) / 10) + 1) * 10 + 100])
         .range([canvasHeight - margin.bottom, margin.top]);
 
+      // Color scale
       var colorScale = d3.scaleOrdinal(d3.schemeCategory10);
 
       // Mileage line
@@ -88,7 +90,7 @@ function loadTSV() {
           return milesScale(d.milesRemaining + d.mileage);
         });
 
-      // Axes
+      // D3 axes
       var xAxis = d3.axisBottom()
         .scale(timeScale)
         .tickFormat(d3.timeFormat('%Y/%m'));
@@ -126,7 +128,7 @@ function loadTSV() {
         .datum(data)
         .attr('d', remainingMilesLine);
 
-      // SVG groups
+      // Axes
       svg.append('g')
         .attr('class', 'x-axis')
         .attr('transform', 'translate(0,' + (canvasHeight - margin.bottom) + ')');
@@ -135,6 +137,17 @@ function loadTSV() {
         .attr('class', 'y-axis')
         .attr('transform', 'translate(' + margin.left + ',0)');
 
+      svg.select('.x-axis')
+        .call(xAxis)
+        .selectAll('text')
+        .attr('x', -25)
+        .attr('y', 5)
+        .attr('transform', 'rotate(-45, 0, 0)');
+
+      svg.select('.y-axis')
+        .call(yAxis);
+
+      // Chart labels
       svg
         .append('text')
         .classed('label', true)
@@ -153,16 +166,6 @@ function loadTSV() {
 
       svg.append('g')
         .classed('dots', true);
-
-      svg.select('.x-axis')
-        .call(xAxis)
-        .selectAll('text')
-        .attr('x', -25)
-        .attr('y', 5)
-        .attr('transform', 'rotate(-45, 0, 0)');
-
-      svg.select('.y-axis')
-        .call(yAxis);
 
       svg
         .append('text')
@@ -224,6 +227,7 @@ function loadTSV() {
           tooltipMouseOut(d);
         });
 
+      // Legend items
       svg.append('text')
         .classed('legend-item', true)
         .datum(data[data.length - 1])
@@ -247,14 +251,22 @@ function loadTSV() {
         .text('Potential Miles');
     }
 
+    /**
+     * Loads the average mileage chart.
+     *
+     * @param data The data for the chart.
+     */
     function loadAverageMPGChart(data) {
       var svg = d3.select('#avg-canvas')
         .attr('width', canvasWidth)
         .attr('height', canvasHeight);
 
       var barWidth = 10;
+
+      // Bar color scale
       var colorScale = d3.scaleOrdinal(d3.schemeCategory20);
 
+      // Axes scales
       var timeScale = d3.scaleTime()
         .domain([d3.timeMonth.offset(new Date(data[0].date), -1), d3.timeMonth.offset(new Date(data[data.length - 1].date), 1)])
         .rangeRound([margin.left, canvasWidth - margin.right]);
@@ -267,6 +279,7 @@ function loadTSV() {
         })))) + 3])
         .range([canvasHeight - margin.bottom, margin.top]);
 
+      // D3 axes
       var xAxis = d3.axisBottom()
         .scale(timeScale)
         .tickFormat(d3.timeFormat('%Y/%m'));
@@ -274,6 +287,7 @@ function loadTSV() {
       var yAxis = d3.axisLeft()
         .scale(avgMPGScale);
 
+      // Axes
       svg.append('g')
         .attr('class', 'x-axis')
         .attr('transform', 'translate(0,' + (canvasHeight - margin.bottom) + ')');
@@ -292,6 +306,7 @@ function loadTSV() {
       svg.select('.y-axis')
         .call(yAxis);
 
+      // Chart labels
       svg
         .append('text')
         .classed('label', true)
@@ -316,6 +331,7 @@ function loadTSV() {
         .attr('text-anchor', 'middle')
         .text('Average Mileage Between Fillups');
 
+      // Add bars
       var barGroup = svg
         .append('g')
         .classed('bars', true);
@@ -353,6 +369,11 @@ function loadTSV() {
         });
     }
 
+    /**
+     * Loads the price per mile chart.
+     *
+     * @param data The data for the chart.
+     */
     function loadPricePerMileChart(data) {
       var svg = d3.select('#price-mile-canvas')
         .attr('width', canvasWidth)
@@ -360,6 +381,7 @@ function loadTSV() {
 
       var barWidth = 10;
 
+      // Axes scales
       var timeScale = d3.scaleTime()
         .domain([d3.timeMonth.offset(new Date(data[0].date), -1), d3.timeMonth.offset(new Date(data[data.length - 1].date), 1)])
         .rangeRound([margin.left, canvasWidth - margin.right]);
@@ -372,6 +394,7 @@ function loadTSV() {
         })))) + 0.16])
         .range([canvasHeight - margin.bottom, margin.top]);
 
+      // Interpolated color scale
       var colorScale = function(d) {
         return d3.scaleLinear()
           .domain([((d3.min(data.map(function (d) {
@@ -383,6 +406,7 @@ function loadTSV() {
           .interpolate(d3.interpolateRgb)(d);
       }
 
+      // D3 axes
       var xAxis = d3.axisBottom()
         .scale(timeScale)
         .tickFormat(d3.timeFormat('%Y/%m'));
@@ -390,6 +414,7 @@ function loadTSV() {
       var yAxis = d3.axisLeft()
         .scale(priceMileScale);
 
+      // Axes
       svg.append('g')
         .attr('class', 'x-axis')
         .attr('transform', 'translate(0,' + (canvasHeight - margin.bottom) + ')');
@@ -408,6 +433,7 @@ function loadTSV() {
       svg.select('.y-axis')
         .call(yAxis);
 
+      // Chart labels
       svg
         .append('text')
         .classed('label', true)
@@ -432,6 +458,7 @@ function loadTSV() {
         .attr('text-anchor', 'middle')
         .text('Price Per Mile By Fillup');
 
+      // Add bars
       var barGroup = svg
         .append('g')
         .classed('bars', true);
@@ -501,6 +528,12 @@ function loadTSV() {
       tooltipMouseMove(d, '[' + d.date + ']: ' + Number(d.pricePerMile).toFixed(3) + ' $/mile');
     }
 
+    /**
+     * Updates the tooltip when the mouse enters over an item.
+     *
+     * @param d The data item being hovered on.
+     * @param text The text to display in the tooltip.
+     */
     function tooltipMouseOver(d, text) {
       tooltip
         .style('top', (d3.event.pageY - 20) + "px")
@@ -512,6 +545,12 @@ function loadTSV() {
         .style('opacity', 1)
     }
 
+    /**
+     * Updates the tooltip when the mouse moves on an item.
+     *
+     * @param d The data item being hovered on.
+     * @param text The text to display in the tooltip.
+     */
     function tooltipMouseMove(d, text) {
       tooltip
         .style('top', (d3.event.pageY - 20) + "px")
@@ -519,6 +558,11 @@ function loadTSV() {
         .text(text);
     }
 
+    /**
+     * Updates the tooltip when the mouse exits an item.
+     *
+     * @param d The data item being exited.
+     */
     function tooltipMouseOut(d) {
       tooltip
         .transition()
