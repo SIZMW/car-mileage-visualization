@@ -19,7 +19,7 @@ var tooltip = d3.select('body')
  * Loads the data file.
  */
 function loadTSV() {
-  d3.tsv('data.tsv', function(d) {
+  d3.tsv('data.tsv', function (d) {
     var mileage = +d['Mileage'];
     var gallonsFilled = +d['Gallons Filled'];
     var pricePerGallon = +d['Price Per Gallon'];
@@ -38,7 +38,7 @@ function loadTSV() {
       pricePerMile: pricePerMile,
       gasUtilization: gasUtilization
     };
-  }, function(error, data) {
+  }, function (error, data) {
     if (error) {
       console.log('Read error');
       return;
@@ -63,29 +63,28 @@ function loadTSV() {
         .rangeRound([margin.left, canvasWidth - margin.right]);
 
       var milesScale = d3.scaleLinear()
-        .domain([0, Math.floor((d3.max(data.map(function(d) {
+        .domain([0, Math.floor((d3.max(data.map(function (d) {
           return d.mileage + d.milesRemaining;
         })) / 10) + 1) * 10 + 100])
         .range([canvasHeight - margin.bottom, margin.top]);
-      console.log(milesScale.domain())
 
       var colorScale = d3.scaleOrdinal(d3.schemeCategory10);
 
       // Mileage line
       var mileageLine = d3.line()
-        .x(function(d) {
+        .x(function (d) {
           return timeScale(new Date(d.date));
         })
-        .y(function(d) {
+        .y(function (d) {
           return milesScale(d.mileage);
         });
 
       // Remaining miles line
       var remainingMilesLine = d3.line()
-        .x(function(d) {
+        .x(function (d) {
           return timeScale(new Date(d.date));
         })
-        .y(function(d) {
+        .y(function (d) {
           return milesScale(d.milesRemaining + d.mileage);
         });
 
@@ -103,7 +102,7 @@ function loadTSV() {
 
       mileageLineGroup.append('path')
         .attr('class', 'line')
-        .attr('stroke', function(d) {
+        .attr('stroke', function (d) {
           return colorScale(milesColorIndex);
         })
         .attr('fill', 'none');
@@ -113,7 +112,7 @@ function loadTSV() {
 
       remainingMilesLineGroup.append('path')
         .attr('class', 'line')
-        .attr('stroke', function(d) {
+        .attr('stroke', function (d) {
           return colorScale(remainingMilesColorIndex);
         })
         .attr('fill', 'none');
@@ -183,52 +182,52 @@ function loadTSV() {
 
       dataDots.append('circle')
         .attr('r', 4)
-        .attr('cx', function(d) {
+        .attr('cx', function (d) {
           return timeScale(new Date(d.date));
         })
-        .attr('cy', function(d) {
+        .attr('cy', function (d) {
           return milesScale(d.mileage);
         })
         .attr('opacity', 1)
-        .attr('fill', function(d) {
+        .attr('fill', function (d) {
           return colorScale(milesColorIndex);
         })
-        .on('mouseover', function(d) {
+        .on('mouseover', function (d) {
           tooltipMileageLineMouseOver(d);
         })
-        .on('mousemove', function(d) {
+        .on('mousemove', function (d) {
           tooltipMileageLineMouseMove(d);
         })
-        .on('mouseout', function(d) {
+        .on('mouseout', function (d) {
           tooltipMouseOut(d);
         });
 
       dataDots.append('circle')
         .attr('r', 4)
-        .attr('cx', function(d) {
+        .attr('cx', function (d) {
           return timeScale(new Date(d.date));
         })
-        .attr('cy', function(d) {
+        .attr('cy', function (d) {
           return milesScale(d.milesRemaining + d.mileage);
         })
         .attr('opacity', 1)
-        .attr('fill', function(d) {
+        .attr('fill', function (d) {
           return colorScale(remainingMilesColorIndex);
         })
-        .on('mouseover', function(d) {
+        .on('mouseover', function (d) {
           tooltipRemainingMilesLineMouseOver(d);
         })
-        .on('mousemove', function(d) {
+        .on('mousemove', function (d) {
           tooltipRemainingMilesLineMouseMove(d);
         })
-        .on('mouseout', function(d) {
+        .on('mouseout', function (d) {
           tooltipMouseOut(d);
         });
 
       svg.append('text')
         .classed('legend-item', true)
         .datum(data[data.length - 1])
-        .attr('transform', function(d) {
+        .attr('transform', function (d) {
           return 'translate(' + timeScale(new Date(d.date)) + ',' + milesScale(d.mileage) + ')';
         })
         .attr('x', -10)
@@ -239,7 +238,7 @@ function loadTSV() {
       svg.append('text')
         .classed('legend-item', true)
         .datum(data[data.length - 1])
-        .attr('transform', function(d) {
+        .attr('transform', function (d) {
           return 'translate(' + timeScale(new Date(d.date)) + ',' + milesScale(d.milesRemaining + d.mileage) + ')';
         })
         .attr('x', -18)
@@ -261,9 +260,9 @@ function loadTSV() {
         .rangeRound([margin.left, canvasWidth - margin.right]);
 
       var avgMPGScale = d3.scaleLinear()
-        .domain([(Math.floor(d3.min(data.map(function(d) {
+        .domain([(Math.floor(d3.min(data.map(function (d) {
           return d.mpg;
-        })))), (Math.floor(d3.max(data.map(function(d) {
+        })))), (Math.floor(d3.max(data.map(function (d) {
           return d.mpg;
         })))) + 3])
         .range([canvasHeight - margin.bottom, margin.top]);
@@ -328,28 +327,144 @@ function loadTSV() {
         .classed('bar', true);
 
       bars.append('rect')
-        .attr('x', function(d) {
+        .attr('x', function (d) {
           return timeScale(new Date(d.date)) - (barWidth / 2);
         })
-        .attr('y', function(d) {
+        .attr('y', function (d) {
           return avgMPGScale(d.mpg);
         })
-        .attr('height', function(d) {
+        .attr('height', function (d) {
           return canvasHeight - avgMPGScale(d.mpg) - margin.bottom;
         })
-        .attr('width', function(d) {
+        .attr('width', function (d) {
           return barWidth;
         })
-        .attr('fill', function(d, i) {
+        .attr('fill', function (d, i) {
           return colorScale(i % 20);
         })
-        .on('mouseover', function(d) {
+        .on('mouseover', function (d) {
           tooltipAvgMPGMouseOver(d);
         })
-        .on('mousemove', function(d) {
+        .on('mousemove', function (d) {
           tooltipAvgMPGMouseMove(d);
         })
-        .on('mouseout', function(d) {
+        .on('mouseout', function (d) {
+          tooltipMouseOut(d);
+        });
+    }
+
+    function loadPricePerMileChart(data) {
+      var svg = d3.select('#price-mile-canvas')
+        .attr('width', canvasWidth)
+        .attr('height', canvasHeight);
+
+      var barWidth = 10;
+
+      var timeScale = d3.scaleTime()
+        .domain([d3.timeMonth.offset(new Date(data[0].date), -1), d3.timeMonth.offset(new Date(data[data.length - 1].date), 1)])
+        .rangeRound([margin.left, canvasWidth - margin.right]);
+
+      var priceMileScale = d3.scaleLinear()
+        .domain([(Math.floor(d3.min(data.map(function (d) {
+          return d.pricePerMile;
+        })))), (Math.floor(d3.max(data.map(function (d) {
+          return d.pricePerMile;
+        })))) + 0.16])
+        .range([canvasHeight - margin.bottom, margin.top]);
+
+      var colorScale = function(d) {
+        return d3.scaleLinear()
+          .domain([((d3.min(data.map(function (d) {
+          return d.pricePerMile;
+        })))), ((d3.max(data.map(function (d) {
+          return d.pricePerMile;
+        }))))])
+          .range(['lightgreen', 'black'])
+          .interpolate(d3.interpolateRgb)(d);
+      }
+
+      var xAxis = d3.axisBottom()
+        .scale(timeScale)
+        .tickFormat(d3.timeFormat('%Y/%m'));
+
+      var yAxis = d3.axisLeft()
+        .scale(priceMileScale);
+
+      svg.append('g')
+        .attr('class', 'x-axis')
+        .attr('transform', 'translate(0,' + (canvasHeight - margin.bottom) + ')');
+
+      svg.append('g')
+        .attr('class', 'y-axis')
+        .attr('transform', 'translate(' + margin.left + ',0)');
+
+      svg.select('.x-axis')
+        .call(xAxis)
+        .selectAll('text')
+        .attr('x', -25)
+        .attr('y', 5)
+        .attr('transform', 'rotate(-45, 0, 0)');
+
+      svg.select('.y-axis')
+        .call(yAxis);
+
+      svg
+        .append('text')
+        .classed('label', true)
+        .attr('x', canvasWidth / 2)
+        .attr('y', canvasHeight - margin.top / 2 + 5)
+        .attr('text-anchor', 'middle')
+        .text('Date');
+
+      svg.append('text')
+        .classed('label', true)
+        .attr('x', -canvasHeight / 2)
+        .attr('y', 10)
+        .attr('text-anchor', 'middle')
+        .attr('transform', 'rotate(-90, 0, 0)')
+        .text('Price Per Mile');
+
+      svg
+        .append('text')
+        .classed('chart-title', true)
+        .attr('x', canvasWidth / 2)
+        .attr('y', margin.bottom)
+        .attr('text-anchor', 'middle')
+        .text('Price Per Mile By Fillup');
+
+      var barGroup = svg
+        .append('g')
+        .classed('bars', true);
+
+      var bars = barGroup.selectAll('.bar')
+        .data(data)
+        .enter()
+        .append('g')
+        .classed('bar', true);
+
+      bars.append('rect')
+        .attr('x', function (d) {
+          return timeScale(new Date(d.date)) - (barWidth / 2);
+        })
+        .attr('y', function (d) {
+          return priceMileScale(d.pricePerMile);
+        })
+        .attr('height', function (d) {
+          return canvasHeight - priceMileScale(d.pricePerMile) - margin.bottom;
+        })
+        .attr('width', function (d) {
+          return barWidth;
+        })
+        .attr('fill', function (d, i) {
+          return colorScale(d.pricePerMile);
+        })
+        .on('mouseover', function (d) {
+          tooltipPriceMileMouseOver(d);
+        })
+        .on('mousemove', function (d) {
+          tooltipPriceMileMouseMove(d);
+        })
+        .on('mouseout', function (d) {
           tooltipMouseOut(d);
         });
     }
@@ -376,6 +491,14 @@ function loadTSV() {
 
     function tooltipAvgMPGMouseMove(d) {
       tooltipMouseMove(d, '[' + d.date + ']: ' + d.mpg + ' mpg');
+    }
+
+    function tooltipPriceMileMouseOver(d) {
+      tooltipMouseOver(d, '[' + d.date + ']: ' + Number(d.pricePerMile).toFixed(3) + ' $/mile');
+    }
+
+    function tooltipPriceMileMouseMove(d) {
+      tooltipMouseMove(d, '[' + d.date + ']: ' + Number(d.pricePerMile).toFixed(3) + ' $/mile');
     }
 
     function tooltipMouseOver(d, text) {
@@ -405,6 +528,7 @@ function loadTSV() {
 
     loadMileageLineChart(data);
     loadAverageMPGChart(data);
+    loadPricePerMileChart(data);
   });
 }
 
