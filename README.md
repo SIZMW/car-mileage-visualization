@@ -11,6 +11,15 @@ This visualization shows a trend line over all the refueling dates, connecting t
 #### Average Miles Per Gallon
 This visualization shows bars for each refueling date and the car's estimated miles per gallon for the driven trip between dates. This chart shows how fuel efficient the car was during each trip, and can give insight into whether or not improvements can be made, or a plateau of fuel efficiency has been reached.
 
+#### Price Per Mile
+This visualization shows bars for each refueling data and the estimated price per mile for the driven trip between dates. Price per mile is calculated by the following:
+
+(`Gallons Filled` * `Price Per Gallon`) / `Mileage`
+
+Price per mile is another metric to show how cost efficient the driven trip was in relation to the amount spent on fuel for that trip. The bars are colored by a scale from green to black, where green is a lower price per mile value, which is better. The scale is shown below.
+
+![Color scale](img/price-per-mile-color-scale.png)
+
 ### Data Fields
 Each `Date` entry is a date for when the fuel tank was refilled. At that time, I extract other information from the car's onboard computer to use in the visualizations.
 * `Mileage`: The current trip's mileage. This is always reset when the car is refueled.
