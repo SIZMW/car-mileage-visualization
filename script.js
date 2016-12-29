@@ -7,7 +7,7 @@ var margin = {
 };
 
 // Canvas size
-var canvasWidth = 600;
+var canvasWidth = 800;
 var canvasHeight = 500;
 
 // Tooltip
