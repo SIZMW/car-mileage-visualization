@@ -8,7 +8,7 @@ var margin = {
 
 // Canvas size
 var canvasWidth = 800;
-var canvasHeight = 500;
+var canvasHeight = 400;
 
 // Tooltip
 var tooltip = d3.select('body')
@@ -58,6 +58,8 @@ function loadTSV() {
       var milesColorIndex = 0;
       var remainingMilesColorIndex = 1;
 
+      var percent = 0.2;
+
       // Scales
       var timeScale = d3.scaleTime()
         .domain([d3.timeMonth.offset(new Date(data[0].date), -1), d3.timeMonth.offset(new Date(data[data.length - 1].date), 1)])
@@ -66,7 +68,7 @@ function loadTSV() {
       var milesScale = d3.scaleLinear()
         .domain([0, Math.floor((d3.max(data.map(function (d) {
           return d.mileage + d.milesRemaining;
-        })) / 10) + 1) * 10 + 100])
+        }))) * (1.0 + percent))])
         .range([canvasHeight - margin.bottom, margin.top]);
 
       // Color scale
@@ -262,6 +264,7 @@ function loadTSV() {
         .attr('height', canvasHeight);
 
       var barWidth = 10;
+      var percent = 0.025;
 
       // Bar color scale
       var colorScale = d3.scaleOrdinal(d3.schemeCategory20);
@@ -276,7 +279,7 @@ function loadTSV() {
           return d.mpg;
         })))), (Math.floor(d3.max(data.map(function (d) {
           return d.mpg;
-        })))) + 3])
+        }))) * (1.0 + percent))])
         .range([canvasHeight - margin.bottom, margin.top]);
 
       // D3 axes
@@ -380,6 +383,7 @@ function loadTSV() {
         .attr('height', canvasHeight);
 
       var barWidth = 10;
+      var percent = 0.3;
 
       // Axes scales
       var timeScale = d3.scaleTime()
@@ -389,9 +393,9 @@ function loadTSV() {
       var priceMileScale = d3.scaleLinear()
         .domain([(Math.floor(d3.min(data.map(function (d) {
           return d.pricePerMile;
-        })))), (Math.floor(d3.max(data.map(function (d) {
+        })))), ((d3.max(data.map(function (d) {
           return d.pricePerMile;
-        })))) + 0.16])
+        }))) * (1.0 + percent))])
         .range([canvasHeight - margin.bottom, margin.top]);
 
       // Interpolated color scale
