@@ -169,13 +169,13 @@ function loadTSV() {
       svg.append('g')
         .classed('dots', true);
 
-      svg
-        .append('text')
-        .classed('chart-title', true)
-        .attr('x', canvasWidth / 2)
-        .attr('y', margin.bottom)
-        .attr('text-anchor', 'middle')
-        .text('Miles Before Fillup vs. Potential Drivable Miles');
+      // svg
+      //   .append('text')
+      //   .classed('chart-title', true)
+      //   .attr('x', canvasWidth / 2)
+      //   .attr('y', margin.bottom / 2)
+      //   .attr('text-anchor', 'middle')
+      //   .text('Miles Before Fillup vs. Potential Drivable Miles');
 
       // Add dots
       var dataDots = svg.select('.dots')
@@ -263,16 +263,20 @@ function loadTSV() {
         .attr('width', canvasWidth)
         .attr('height', canvasHeight);
 
-      var barWidth = 10;
+      var barWidth = (canvasWidth - margin.right - margin.left) / (data.length * 4);
       var percent = 0.025;
 
-      // Bar color scale
-      var colorScale = d3.scaleOrdinal(d3.schemeCategory20);
-
       // Axes scales
-      var timeScale = d3.scaleTime()
-        .domain([d3.timeMonth.offset(new Date(data[0].date), -1), d3.timeMonth.offset(new Date(data[data.length - 1].date), 1)])
-        .rangeRound([margin.left, canvasWidth - margin.right]);
+      // var timeScale = d3.scaleTime()
+      //   .domain([d3.timeMonth.offset(new Date(data[0].date), -1), d3.timeMonth.offset(new Date(data[data.length - 1].date), 1)])
+      //   .rangeRound([margin.left, canvasWidth - margin.right]);
+
+      var timeScale = d3.scalePoint()
+        .domain(data.map(function(d) {
+          return d.date;
+        }))
+        .range([margin.left, canvasWidth - margin.right])
+        .padding(0.5);
 
       var avgMPGScale = d3.scaleLinear()
         .domain([(Math.floor(d3.min(data.map(function (d) {
@@ -282,10 +286,25 @@ function loadTSV() {
         }))) * (1.0 + percent))])
         .range([canvasHeight - margin.bottom, margin.top]);
 
+      // Interpolated color scale
+      var colorScale = function(d) {
+        return d3.scaleLinear()
+          .domain([((d3.max(data.map(function (d) {
+          return d.mpg;
+        })))), ((d3.min(data.map(function (d) {
+          return d.mpg;
+        }))))])
+          .range(['#c6dbef', '#084594'])
+          .interpolate(d3.interpolateRgb)(d);
+      }
+
       // D3 axes
       var xAxis = d3.axisBottom()
         .scale(timeScale)
-        .tickFormat(d3.timeFormat('%Y/%m'));
+        // .tickFormat(d3.timeFormat('%Y/%m'));
+        .tickFormat(function(d) {
+          return d3.timeFormat('%Y/%m')(new Date(d));
+        });
 
       var yAxis = d3.axisLeft()
         .scale(avgMPGScale);
@@ -326,13 +345,13 @@ function loadTSV() {
         .attr('transform', 'rotate(-90, 0, 0)')
         .text('Miles Per Gallon');
 
-      svg
-        .append('text')
-        .classed('chart-title', true)
-        .attr('x', canvasWidth / 2)
-        .attr('y', margin.bottom)
-        .attr('text-anchor', 'middle')
-        .text('Average Mileage Between Fillups');
+      // svg
+      //   .append('text')
+      //   .classed('chart-title', true)
+      //   .attr('x', canvasWidth / 2)
+      //   .attr('y', margin.bottom / 2)
+      //   .attr('text-anchor', 'middle')
+      //   .text('Average Mileage Between Fillups');
 
       // Add bars
       var barGroup = svg
@@ -347,7 +366,8 @@ function loadTSV() {
 
       bars.append('rect')
         .attr('x', function (d) {
-          return timeScale(new Date(d.date)) - (barWidth / 2);
+          // return timeScale(new Date(d.date)) - (barWidth / 2);
+          return timeScale(d.date) - (barWidth / 2);
         })
         .attr('y', function (d) {
           return avgMPGScale(d.mpg);
@@ -358,8 +378,8 @@ function loadTSV() {
         .attr('width', function (d) {
           return barWidth;
         })
-        .attr('fill', function (d, i) {
-          return colorScale(i % 20);
+        .attr('fill', function (d) {
+          return colorScale(d.mpg);
         })
         .on('mouseover', function (d) {
           tooltipAvgMPGMouseOver(d);
@@ -413,7 +433,7 @@ function loadTSV() {
         })))), ((d3.max(data.map(function (d) {
           return d.pricePerMile;
         }))))])
-          .range(['lightgreen', 'black'])
+          .range(['#c7e9c0', '#005a32'])
           .interpolate(d3.interpolateRgb)(d);
       }
 
@@ -464,13 +484,13 @@ function loadTSV() {
         .attr('transform', 'rotate(-90, 0, 0)')
         .text('Price Per Mile');
 
-      svg
-        .append('text')
-        .classed('chart-title', true)
-        .attr('x', canvasWidth / 2)
-        .attr('y', margin.bottom)
-        .attr('text-anchor', 'middle')
-        .text('Price Per Mile By Fillup');
+      // svg
+      //   .append('text')
+      //   .classed('chart-title', true)
+      //   .attr('x', canvasWidth / 2)
+      //   .attr('y', margin.bottom / 2)
+      //   .attr('text-anchor', 'middle')
+      //   .text('Price Per Mile By Fillup');
 
       // Add bars
       var barGroup = svg
