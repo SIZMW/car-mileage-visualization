@@ -382,13 +382,20 @@ function loadTSV() {
         .attr('width', canvasWidth)
         .attr('height', canvasHeight);
 
-      var barWidth = 10;
+      var barWidth = (canvasWidth - margin.right - margin.left) / (data.length * 4);
       var percent = 0.3;
 
       // Axes scales
-      var timeScale = d3.scaleTime()
-        .domain([d3.timeMonth.offset(new Date(data[0].date), -1), d3.timeMonth.offset(new Date(data[data.length - 1].date), 1)])
-        .rangeRound([margin.left, canvasWidth - margin.right]);
+      // var timeScale = d3.scaleTime()
+      //   .domain([d3.timeMonth.offset(new Date(data[0].date), -1), d3.timeMonth.offset(new Date(data[data.length - 1].date), 1)])
+      //   .rangeRound([margin.left, canvasWidth - margin.right]);
+
+      var timeScale = d3.scalePoint()
+        .domain(data.map(function(d) {
+          return d.date;
+        }))
+        .range([margin.left, canvasWidth - margin.right])
+        .padding(0.5);
 
       var priceMileScale = d3.scaleLinear()
         .domain([(Math.floor(d3.min(data.map(function (d) {
@@ -413,7 +420,10 @@ function loadTSV() {
       // D3 axes
       var xAxis = d3.axisBottom()
         .scale(timeScale)
-        .tickFormat(d3.timeFormat('%Y/%m'));
+        // .tickFormat(d3.timeFormat('%Y/%m'));
+        .tickFormat(function(d) {
+          return d3.timeFormat('%Y/%m')(new Date(d));
+        });
 
       var yAxis = d3.axisLeft()
         .scale(priceMileScale);
@@ -474,8 +484,9 @@ function loadTSV() {
         .classed('bar', true);
 
       bars.append('rect')
-        .attr('x', function (d) {
-          return timeScale(new Date(d.date)) - (barWidth / 2);
+        .attr('x', function (d, i) {
+          // return timeScale(new Date(d.date)) - (barWidth / 2);
+          return timeScale(d.date) - (barWidth / 2);
         })
         .attr('y', function (d) {
           return priceMileScale(d.pricePerMile);
@@ -525,11 +536,11 @@ function loadTSV() {
     }
 
     function tooltipPriceMileMouseOver(d) {
-      tooltipMouseOver(d, '[' + d.date + ']: ' + Number(d.pricePerMile).toFixed(3) + ' $/mile');
+      tooltipMouseOver(d, Number(d.pricePerMile).toFixed(3) + ' $/mile');
     }
 
     function tooltipPriceMileMouseMove(d) {
-      tooltipMouseMove(d, '[' + d.date + ']: ' + Number(d.pricePerMile).toFixed(3) + ' $/mile');
+      tooltipMouseMove(d, Number(d.pricePerMile).toFixed(3) + ' $/mile');
     }
 
     /**
