@@ -13,10 +13,66 @@
     <script src="https://d3js.org/d3-interpolate.v1.min.js"></script>
     <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
     <script src="script.js"></script>
-    <center>
-      <svg id="avg-canvas"></svg>
-      <svg id="mileage-canvas"></svg>
-      <svg id="price-mile-canvas"></svg>
-    </center>
+    <div id="content">
+      <div id="intro-content">
+        <h1>
+          Car Mileage Visualization
+        </h1>
+        <p>
+          This set of visualizations have been created for the purpose of viewing and analyzing mileage, trip, gas prices, and fuel usage trends across mileage data. I hope to use these visualizations to analyze driving habits across the year, or find instances where driving and fuel efficiency could be improved.
+        </p>
+        <p>
+          The data for the visualization was collected from the vehicle's onboard computer, as well as when filling up the fuel tank. I plan to continue collecting data and adding it to the visualizations to see trends as time progress in the future.
+        </p>
+        <h3>
+          Dataset
+        </h3>
+        <p>
+          For reference, the car used for this data is a <a target="_blank" href="https://www.cars.com/research/honda-accord/specs/usc40hoc011d0/">2014 Honda Accord EX-L</a>. I mostly use the car for commuting to and from school, but less frequently for various events, travel, groceries, etc.
+        </p>
+        <p>
+          I realize that these other use cases are not made clear in the usage data, but can still make a negative impact in terms of understanding why certain trends exist. I hope to resolve this in the future with either data filtering or additional visualization(s).
+        </p>
+      </div>
+      <div id="avg-content">
+        <h2>
+          Average Miles Per Gallon Between Fillups
+        </h2>
+        <svg id="avg-canvas" class="chart"></svg>
+        <p>
+          Something something something something something something something something something something something.
+        </p>
+      </div>
+      <div id="mileage-content">
+        <h2>
+          Mileage vs. Potential Miles
+        </h2>
+        <svg id="mileage-canvas" class="chart"></svg>
+        <p>
+          Something something something something something something something something something something something.
+        </p>
+      </div>
+      <div id="price-mile-content">
+        <h2>
+          Price Per Mile By Fillup Date
+        </h2>
+        <svg id="price-mile-canvas" class="chart"></svg>
+        <p>
+          Something something something something something something something something something something something.
+        </p>
+      </div>
+      <div id="credits">
+        <h2>
+          Credits
+        </h2>
+        <p>
+          This visualization was created by <a href="https://github.com/SIZMW">Aditya Nivarthi</a>.
+        </p>
+                <h2>Source</h2>
+        <p>
+          The source code for this visualization can be found <a href="https://github.com/SIZMW/nyc-taxi-vis">here</a>.
+        </p>
+      </div>
+    </div>
   </body>
 </html>

@@ -2,6 +2,16 @@ body {
   font-family: Roboto;
 }
 
+#content {
+  width: 700pt;
+  margin: 0 auto;
+}
+
+.chart {
+  display: block;
+  margin: 0 auto;
+}
+
 .chart-title {
   font-size: 12px;
 }
