@@ -11,6 +11,14 @@ $(function () {
   var canvasWidth = 800;
   var canvasHeight = 400;
 
+  // Colors for charts
+  var blueLight = '#c6dbef';
+  var blueDark = '#084594';
+  var greenLight = '#c7e9c0';
+  var greenDark = '#005a32';
+  var redLight = '#fcbba1';
+  var redDark = '#cb181d';
+
   // Tooltip
   var tooltip = d3.select('body')
     .append('div')
@@ -318,7 +326,7 @@ $(function () {
             })))), ((d3.min(data.map(function (d) {
               return d.mpg;
             }))))])
-            .range(['#c6dbef', '#084594'])
+            .range([blueLight, blueDark])
             .interpolate(d3.interpolateRgb)(d);
         }
 
@@ -443,7 +451,7 @@ $(function () {
             })))), ((d3.max(data.map(function (d) {
               return d.pricePerMile;
             }))))])
-            .range(['#c7e9c0', '#005a32'])
+            .range([greenLight, greenDark])
             .interpolate(d3.interpolateRgb)(d);
         }
 
@@ -558,7 +566,7 @@ $(function () {
             })))), ((d3.max(data.map(function (d) {
               return d.daysSinceFillup;
             }))))])
-            .range(['#cb181d', '#fcbba1'])
+            .range([redDark, redLight])
             .interpolate(d3.interpolateRgb)(d);
         }
 
@@ -689,6 +697,7 @@ $(function () {
           .style('opacity', 0)
       }
 
+      // Load all charts
       loadMileageLineChart(data);
       loadAverageMPGChart(data);
       loadPricePerMileChart(data);
@@ -696,5 +705,6 @@ $(function () {
     });
   }
 
+  // Load data
   loadTSV();
 });
