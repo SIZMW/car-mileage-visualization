@@ -30,7 +30,9 @@ Each `Date` entry is a date for when the fuel tank was refilled. At that time, I
 * `MPG`: The estimated miles per gallon that was achieved during the car trip, since the last reset of the trip's mileage. This is a statistic that the car's computer estimates.
 
 When processing the data, I also calculate the following fields:
-* `Days Since Previous Fillup`: The number of days from the previous fillup to the current fillup date.
+* `Days Since Fillup`: The number of days from the previous fillup to the current fillup date.
+* `Price Per Mile`: The cost per mile driven of the total mileage of the trip.
+* `Gas Utilization`: The percentage utilization of the gas from the fillup. This is calculated by the following: `Mileage` / (`Mileage` + `Miles Remaining`).
 
 ## Usage
 The visualization can be seen [here](https://sizmw.github.io/car-mileage-visualization/).
