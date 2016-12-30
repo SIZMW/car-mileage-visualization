@@ -196,10 +196,10 @@ $(function () {
             return colorScale(milesColorIndex);
           })
           .on('mouseover', function (d) {
-            tooltipMileageLineMouseOver(d);
+            tooltipMouseOver(d, tooltipTextMileageLine(d));
           })
           .on('mousemove', function (d) {
-            tooltipMileageLineMouseMove(d);
+            tooltipMouseMove(d, tooltipTextMileageLine(d));
           })
           .on('mouseout', function (d) {
             tooltipMouseOut(d);
@@ -218,10 +218,10 @@ $(function () {
             return colorScale(remainingMilesColorIndex);
           })
           .on('mouseover', function (d) {
-            tooltipRemainingMilesLineMouseOver(d);
+            tooltipMouseOver(d, tooltipTextRemainingMilesLine(d));
           })
           .on('mousemove', function (d) {
-            tooltipRemainingMilesLineMouseMove(d);
+            tooltipMouseMove(d, tooltipTextRemainingMilesLine(d));
           })
           .on('mouseout', function (d) {
             tooltipMouseOut(d);
@@ -366,10 +366,10 @@ $(function () {
             return colorScale(d.mpg);
           })
           .on('mouseover', function (d) {
-            tooltipAvgMPGMouseOver(d);
+            tooltipMouseOver(d, tooltipTextAvgMPG(d));
           })
           .on('mousemove', function (d) {
-            tooltipAvgMPGMouseMove(d);
+            tooltipMouseMove(d, tooltipTextAvgMPG(d));
           })
           .on('mouseout', function (d) {
             tooltipMouseOut(d);
@@ -491,48 +491,119 @@ $(function () {
             return colorScale(d.pricePerMile);
           })
           .on('mouseover', function (d) {
-            tooltipPriceMileMouseOver(d);
+            tooltipMouseOver(d, tooltipTextPriceMile(d));
           })
           .on('mousemove', function (d) {
-            tooltipPriceMileMouseMove(d);
+            tooltipMouseMove(d, tooltipTextPriceMile(d));
           })
           .on('mouseout', function (d) {
             tooltipMouseOut(d);
           });
       }
 
-      function tooltipMileageLineMouseOver(d) {
-        tooltipMouseOver(d, d.mileage);
+      /**
+       * Loads the fillup frequency chart.
+       *
+       * @param data The data for the chart.
+       */
+      function loadFillupFrequencyChart(data) {
+        var thisCanvasHeight = canvasHeight / 2;
+        var svg = d3.select('#fillup-freq-canvas')
+          .attr('width', canvasWidth)
+          .attr('height', thisCanvasHeight);
+
+        // Indices for ordinal colors
+        var milesColorIndex = 0;
+        var percent = 0.2;
+
+        // Scales
+        var timeScale = d3.scaleTime()
+          .domain([d3.timeMonth.offset(new Date(data[0].date), -1), d3.timeMonth.offset(new Date(data[data.length - 1].date), 1)])
+          .rangeRound([margin.left, canvasWidth - margin.right]);
+
+        // D3 axes
+        var xAxis = d3.axisBottom()
+          .scale(timeScale)
+          .tickFormat(d3.timeFormat('%Y/%m'));
+
+        // Axes
+        svg.append('g')
+          .attr('class', 'x-axis')
+          .attr('transform', 'translate(0,' + (thisCanvasHeight - margin.bottom) + ')');
+
+        svg.append('g')
+          .attr('class', 'y-axis')
+          .attr('transform', 'translate(' + margin.left + ',0)');
+
+        svg.select('.x-axis')
+          .call(xAxis)
+          .selectAll('text')
+          .attr('x', -25)
+          .attr('y', 5)
+          .attr('transform', 'rotate(-45, 0, 0)');
+
+        // Chart labels
+        svg
+          .append('text')
+          .classed('label', true)
+          .attr('x', canvasWidth / 2)
+          .attr('y', thisCanvasHeight - margin.top / 2 + 5)
+          .attr('text-anchor', 'middle')
+          .text('Date');
+
+        svg.append('g')
+          .classed('dots', true);
+
+        // Add dots
+        var dataDots = svg.select('.dots')
+          .selectAll('.dot')
+          .data(data)
+          .enter()
+          .append('g')
+          .classed('dot', true);
+
+        dataDots.append('circle')
+          .attr('r', 4)
+          .attr('cx', function (d) {
+            return timeScale(new Date(d.date));
+          })
+          .attr('cy', function (d) {
+            return ((thisCanvasHeight - margin.top - margin.bottom) / 2);
+          })
+          .attr('opacity', 1)
+          .attr('fill', function (d) {
+            return '#ef3b2c';
+          })
+          .on('mouseover', function (d) {
+            tooltipMouseOver(d, tooltipTextFillupFreq(d));
+          })
+          .on('mousemove', function (d) {
+            tooltipMouseMove(d, tooltipTextFillupFreq(d));
+          })
+          .on('mouseout', function (d) {
+            tooltipMouseOut(d);
+          });
       }
 
-      function tooltipRemainingMilesLineMouseOver(d) {
-        tooltipMouseOver(d, '[' + d.date + ']: ' + d.mileage + ' + ' + d.milesRemaining + ' = ' + (d.milesRemaining + d.mileage));
+      function tooltipTextMileageLine(d) {
+        return d.mileage;
       }
 
-      function tooltipMileageLineMouseMove(d) {
-        tooltipMouseMove(d, '[' + d.date + ']: ' + d.mileage);
+      function tooltipTextRemainingMilesLine(d) {
+        return d.mileage + ' + ' + d.milesRemaining + ' = ' + (d.milesRemaining + d.mileage);
       }
 
-      function tooltipRemainingMilesLineMouseMove(d) {
-        tooltipMouseMove(d, '[' + d.date + ']: ' + d.mileage + ' + ' + d.milesRemaining + ' = ' + (d.milesRemaining + d.mileage));
+      function tooltipTextAvgMPG(d) {
+        return d.mpg + ' mpg';
       }
 
-      function tooltipAvgMPGMouseOver(d) {
-        tooltipMouseOver(d, d.mpg + ' mpg');
+      function tooltipTextPriceMile(d) {
+        return Number(d.pricePerMile)
+          .toFixed(3) + ' $/mile';
       }
 
-      function tooltipAvgMPGMouseMove(d) {
-        tooltipMouseMove(d, d.mpg + ' mpg');
-      }
-
-      function tooltipPriceMileMouseOver(d) {
-        tooltipMouseOver(d, Number(d.pricePerMile)
-          .toFixed(3) + ' $/mile');
-      }
-
-      function tooltipPriceMileMouseMove(d) {
-        tooltipMouseMove(d, Number(d.pricePerMile)
-          .toFixed(3) + ' $/mile');
+      function tooltipTextFillupFreq(d) {
+        return d.date;
       }
 
       /**
@@ -580,6 +651,7 @@ $(function () {
       loadMileageLineChart(data);
       loadAverageMPGChart(data);
       loadPricePerMileChart(data);
+      loadFillupFrequencyChart(data);
     });
   }
 
