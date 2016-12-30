@@ -16,7 +16,7 @@ $(function () {
   var blueDark = '#084594';
   var greenLight = '#c7e9c0';
   var greenDark = '#005a32';
-  var redLight = '#fcbba1';
+  var redLight = '#fee0d2';
   var redDark = '#cb181d';
 
   // Tooltip
@@ -76,8 +76,6 @@ $(function () {
 
           var daysSince = (currDate - prevDate) / dayConversionFactor;
           data[i]['daysSinceFillup'] = daysSince;
-
-          console.log(data[i]['daysSinceFillup']);
         }
       }
 
@@ -412,6 +410,11 @@ $(function () {
           .on('mouseout', function (d) {
             tooltipMouseOut(d);
           });
+
+        // Legend
+        var scaleWidth = 20;
+        var scaleHeight = 100;
+        generateGradientLegend(svg, 'average-mpg-gradient-scale', scaleWidth, scaleHeight, avgMPGScale.domain(), [(canvasHeight - margin.top) / 2 + scaleHeight / 2 - 1, (canvasHeight - margin.top) / 2 - scaleHeight / 2], [blueLight, blueDark]);
       }
 
       /**
@@ -537,6 +540,11 @@ $(function () {
           .on('mouseout', function (d) {
             tooltipMouseOut(d);
           });
+
+        // Legend
+        var scaleWidth = 20;
+        var scaleHeight = 100;
+        generateGradientLegend(svg, 'price-per-mile-gradient-scale', scaleWidth, scaleHeight, priceMileScale.domain(), [(canvasHeight - margin.top) / 2 + scaleHeight / 2 - 1, (canvasHeight - margin.top) / 2 - scaleHeight / 2], [greenDark, greenLight]);
       }
 
       /**
@@ -559,14 +567,16 @@ $(function () {
           .domain([d3.timeMonth.offset(new Date(data[0].date), -1), d3.timeMonth.offset(new Date(data[data.length - 1].date), 1)])
           .rangeRound([margin.left, canvasWidth - margin.right]);
 
+        var daysFreqScale = d3.scaleLinear()
+          .domain([((d3.min(data.map(function (d) {
+            return d.daysSinceFillup;
+          })))), ((d3.max(data.map(function (d) {
+            return d.daysSinceFillup;
+          }))))])
+          .range([redDark, redLight]);
+
         var colorScale = function (d) {
-          return d3.scaleLinear()
-            .domain([((d3.min(data.map(function (d) {
-              return d.daysSinceFillup;
-            })))), ((d3.max(data.map(function (d) {
-              return d.daysSinceFillup;
-            }))))])
-            .range([redDark, redLight])
+          return daysFreqScale
             .interpolate(d3.interpolateRgb)(d);
         }
 
@@ -632,6 +642,73 @@ $(function () {
           .on('mouseout', function (d) {
             tooltipMouseOut(d);
           });
+
+        // Legend
+        var scaleWidth = 20;
+        var scaleHeight = 50;
+        generateGradientLegend(svg, 'fillup-freq-gradient-scale', scaleWidth, scaleHeight, daysFreqScale.domain(), [((thisCanvasHeight - margin.top - (margin.bottom / 2)) / 2) + scaleHeight / 2 - 1,
+          ((thisCanvasHeight - margin.top - (margin.bottom / 2)) / 2) - scaleHeight / 2
+        ], [redLight, redDark]);
+      }
+
+      /**
+       * Generates a gradient legend scale for the specified chart.
+       *
+       * @param svg The chart to draw on.
+       * @param id The unique ID for the gradient.
+       * @param scaleWidth The width of the gradient rectangle.
+       * @param scaleHeight The height of the gradient rectangle.
+       * @param vertScaleDomain The domain for the legend scale.
+       * @param vertRange The range of coordinates for the scale.
+       * @param colorRange The start and stop points for the gradient.
+       */
+      function generateGradientLegend(svg, id, scaleWidth, scaleHeight, vertScaleDomain, vertRange, colorRange) {
+        var defs = svg.append('defs');
+        var gradient = defs.append('linearGradient')
+          .attr('id', id);
+
+        var legendScale = d3.scaleLinear()
+          .domain(vertScaleDomain)
+          .range(vertRange);
+
+        var legendAxis = d3.axisLeft(legendScale)
+          .tickFormat(function (d, i) {
+            return d;
+          })
+          .ticks(6);
+
+        gradient
+          .attr("x1", "0%")
+          .attr("y1", "0%")
+          .attr("x2", "0%")
+          .attr("y2", "100%");
+
+        gradient.append('stop')
+          .attr('offset', '0%')
+          .attr('stop-opacity', 1.0)
+          .attr('stop-color', colorRange[0]);
+
+        gradient.append('stop')
+          .attr('offset', '100%')
+          .attr('stop-opacity', 1.0)
+          .attr('stop-color', colorRange[1]);
+
+        svg.append('rect')
+          .attr('class', 'legend')
+          .attr('x', Math.floor(canvasWidth - (margin.right / 2)))
+          .attr('y', vertRange[1])
+          .attr('width', scaleWidth)
+          .attr('height', scaleHeight)
+          .attr('stroke', 'black')
+          .attr('stroke-width', 0)
+          .style('fill', 'url(#' + id + ')');
+
+        svg
+          .append('g')
+          .classed('legend-axis', true)
+          .attr('transform', 'translate(' + Math.floor(canvasWidth - (margin.right / 2)) + ',0)')
+          .attr('stroke-width', 1)
+          .call(legendAxis);
       }
 
       function tooltipTextMileageLine(d) {
