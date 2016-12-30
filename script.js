@@ -46,6 +46,36 @@ $(function () {
       }
 
       /**
+       * Adds an attribute to each data value for the number of days since
+       * the previous fillup date.
+       *
+       * @param data The data for the chart(s).
+       */
+      function calculateDaysSinceFillup(data) {
+        var DEFAULT_VAL = 30;
+        var dayConversionFactor = (1000 * 60 * 60 * 24);
+
+        for (i = 1; i < data.length; i++) {
+          if ((i - 1) == 0) {
+            data[i - 1]['daysSinceFillup'] = DEFAULT_VAL;
+          }
+
+          var prev = data[i - 1];
+          var curr = data[i];
+
+          var prevDate = new Date(prev.date);
+          var currDate = new Date(curr.date);
+
+          var daysSince = (currDate - prevDate) / dayConversionFactor;
+          data[i]['daysSinceFillup'] = daysSince;
+
+          console.log(data[i]['daysSinceFillup']);
+        }
+      }
+
+      calculateDaysSinceFillup(data);
+
+      /**
        * Loads the mileage and miles remaining line chart.
        *
        * @param data The data for the chart.
@@ -521,6 +551,17 @@ $(function () {
           .domain([d3.timeMonth.offset(new Date(data[0].date), -1), d3.timeMonth.offset(new Date(data[data.length - 1].date), 1)])
           .rangeRound([margin.left, canvasWidth - margin.right]);
 
+        var colorScale = function (d) {
+          return d3.scaleLinear()
+            .domain([((d3.min(data.map(function (d) {
+              return d.daysSinceFillup;
+            })))), ((d3.max(data.map(function (d) {
+              return d.daysSinceFillup;
+            }))))])
+            .range(['#cb181d', '#fcbba1'])
+            .interpolate(d3.interpolateRgb)(d);
+        }
+
         // D3 axes
         var xAxis = d3.axisBottom()
           .scale(timeScale)
@@ -568,11 +609,11 @@ $(function () {
             return timeScale(new Date(d.date));
           })
           .attr('cy', function (d) {
-            return ((thisCanvasHeight - margin.top - margin.bottom) / 2);
+            return ((thisCanvasHeight - margin.top - (margin.bottom / 2)) / 2);
           })
           .attr('opacity', 1)
           .attr('fill', function (d) {
-            return '#ef3b2c';
+            return colorScale(d.daysSinceFillup);
           })
           .on('mouseover', function (d) {
             tooltipMouseOver(d, tooltipTextFillupFreq(d));
@@ -603,7 +644,7 @@ $(function () {
       }
 
       function tooltipTextFillupFreq(d) {
-        return d.date;
+        return '[' + d.date + ']: ' + d.daysSinceFillup + ' days';
       }
 
       /**
