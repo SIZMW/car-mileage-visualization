@@ -311,7 +311,7 @@ $(function () {
         var avgMPGScale = d3.scaleLinear()
           .domain([(Math.floor(d3.min(data.map(function (d) {
             return d.mpg;
-          })))), (Math.floor(d3.max(data.map(function (d) {
+          }))) * (1.0 - percent)), (Math.floor(d3.max(data.map(function (d) {
             return d.mpg;
           }))) * (1.0 + percent))])
           .range([canvasHeight - margin.bottom, margin.top]);
@@ -645,7 +645,7 @@ $(function () {
 
         // Legend
         var scaleWidth = 20;
-        var scaleHeight = 50;
+        var scaleHeight = 75;
         generateGradientLegend(svg, 'fillup-freq-gradient-scale', scaleWidth, scaleHeight, daysFreqScale.domain(), [((thisCanvasHeight - margin.top - (margin.bottom / 2)) / 2) + scaleHeight / 2 - 1,
           ((thisCanvasHeight - margin.top - (margin.bottom / 2)) / 2) - scaleHeight / 2
         ], [redLight, redDark]);
@@ -729,7 +729,7 @@ $(function () {
       }
 
       function tooltipTextFillupFreq(d) {
-        return '[' + d.date + ']: ' + d.daysSinceFillup + ' days';
+        return '[' + d.date + ']: ' + d.daysSinceFillup.toFixed(0) + ' days';
       }
 
       /**
