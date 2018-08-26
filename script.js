@@ -33,8 +33,9 @@ $(function () {
       var gallonsFilled = +d['Gallons Filled'];
       var pricePerGallon = +d['Price Per Gallon'];
       var milesRemaining = +d['Miles Remaining'];
+      var mpg = +d['MPG'];
 
-      var pricePerMile = (gallonsFilled * pricePerGallon) / mileage;
+      var pricePerMile = pricePerGallon / mpg;
       var gasUtilization = mileage / (mileage + milesRemaining);
 
       return {
@@ -43,7 +44,7 @@ $(function () {
         milesRemaining: milesRemaining,
         gallonsFilled: gallonsFilled,
         pricePerGallon: pricePerGallon,
-        mpg: +d['MPG'],
+        mpg: mpg,
         pricePerMile: pricePerMile,
         gasUtilization: gasUtilization
       };
@@ -297,7 +298,7 @@ $(function () {
           .attr('width', canvasWidth)
           .attr('height', canvasHeight);
 
-        var barWidth = 20;
+        var barWidth = 16;
         var percent = 0.025;
 
         // Axes scales
@@ -427,7 +428,7 @@ $(function () {
           .attr('width', canvasWidth)
           .attr('height', canvasHeight);
 
-        var barWidth = 20;
+        var barWidth = 16;
         var percent = 0.3;
 
         // Axes scales
