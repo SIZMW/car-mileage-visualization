@@ -220,8 +220,10 @@ $(function () {
           .append('g')
           .classed('dot', true);
 
+        var circleRadius = 3;
+
         dataDots.append('circle')
-          .attr('r', 4)
+          .attr('r', circleRadius)
           .attr('cx', function (d) {
             return timeScale(d.date);
           })
@@ -243,7 +245,7 @@ $(function () {
           });
 
         dataDots.append('circle')
-          .attr('r', 4)
+          .attr('r', circleRadius)
           .attr('cx', function (d) {
             return timeScale(d.date);
           })
@@ -298,7 +300,7 @@ $(function () {
           .attr('width', canvasWidth)
           .attr('height', canvasHeight);
 
-        var barWidth = 16;
+        var barWidth = 13;
         var percent = 0.025;
 
         // Axes scales
@@ -428,7 +430,7 @@ $(function () {
           .attr('width', canvasWidth)
           .attr('height', canvasHeight);
 
-        var barWidth = 16;
+        var barWidth = 13;
         var percent = 0.3;
 
         // Axes scales
@@ -622,8 +624,10 @@ $(function () {
           .append('g')
           .classed('dot', true);
 
+        var circleRadius = 3;
+
         dataDots.append('circle')
-          .attr('r', 4)
+          .attr('r', circleRadius)
           .attr('cx', function (d) {
             return timeScale(new Date(d.date));
           })
