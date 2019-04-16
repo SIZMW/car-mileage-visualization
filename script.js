@@ -136,9 +136,7 @@ $(function () {
         // D3 axes
         var xAxis = d3.axisBottom()
           .scale(timeScale)
-          .tickFormat(function (d) {
-            return d3.utcFormat('%Y/%m/%d')(new Date(d));
-          });
+          .tickFormat(getDateAxisEntriesByInterval);
 
         var yAxis = d3.axisLeft()
           .scale(milesScale);
@@ -273,8 +271,8 @@ $(function () {
           .attr('transform', function (d) {
             return 'translate(' + timeScale(d.date) + ',' + milesScale(d.mileage) + ')';
           })
-          .attr('x', -10)
-          .attr('y', -10)
+          .attr('x', 10)
+          .attr('y', 0)
           .attr('alignment-baseline', 'middle')
           .text('Mileage');
 
@@ -284,8 +282,8 @@ $(function () {
           .attr('transform', function (d) {
             return 'translate(' + timeScale(d.date) + ',' + milesScale(d.milesRemaining + d.mileage) + ')';
           })
-          .attr('x', -18)
-          .attr('y', -10)
+          .attr('x', 10)
+          .attr('y', 0)
           .attr('alignment-baseline', 'middle')
           .text('Potential Miles');
       }
@@ -300,7 +298,7 @@ $(function () {
           .attr('width', canvasWidth)
           .attr('height', canvasHeight);
 
-        var barWidth = 13;
+        var barWidth = 12;
         var percent = 0.025;
 
         // Axes scales
@@ -334,9 +332,7 @@ $(function () {
         // D3 axes
         var xAxis = d3.axisBottom()
           .scale(timeScale)
-          .tickFormat(function (d) {
-            return d3.utcFormat('%Y/%m/%d')(new Date(d));
-          });
+          .tickFormat(getDateAxisEntriesByInterval);
 
         var yAxis = d3.axisLeft()
           .scale(avgMPGScale);
@@ -430,7 +426,7 @@ $(function () {
           .attr('width', canvasWidth)
           .attr('height', canvasHeight);
 
-        var barWidth = 13;
+        var barWidth = 12;
         var percent = 0.3;
 
         // Axes scales
@@ -464,9 +460,7 @@ $(function () {
         // D3 axes
         var xAxis = d3.axisBottom()
           .scale(timeScale)
-          .tickFormat(function (d) {
-            return d3.utcFormat('%Y/%m/%d')(new Date(d));
-          });
+          .tickFormat(getDateAxisEntriesByInterval);
 
         var yAxis = d3.axisLeft()
           .scale(priceMileScale);
@@ -717,24 +711,42 @@ $(function () {
       }
 
       function tooltipTextMileageLine(d) {
-        return d.mileage;
+        return '[' + getDateFormat(d.date) + ']: ' + d.mileage;
       }
 
       function tooltipTextRemainingMilesLine(d) {
-        return d.mileage + ' + ' + d.milesRemaining + ' = ' + (d.milesRemaining + d.mileage);
+        return '[' + getDateFormat(d.date) + ']: ' + d.mileage + ' + ' + d.milesRemaining + ' = ' + (d.milesRemaining + d.mileage);
       }
 
       function tooltipTextAvgMPG(d) {
-        return d.mpg + ' mpg';
+        return '[' + getDateFormat(d.date) + ']: ' + d.mpg + ' mpg';
       }
 
       function tooltipTextPriceMile(d) {
-        return Number(d.pricePerMile)
+        return '[' + getDateFormat(d.date) + ']: ' + Number(d.pricePerMile)
           .toFixed(3) + ' $/mile';
       }
 
       function tooltipTextFillupFreq(d) {
-        return '[' + d.date + ']: ' + d.daysSinceFillup.toFixed(0) + ' days';
+        return '[' + getDateFormat(d.date) + ']: ' + d.daysSinceFillup.toFixed(0) + ' days';
+      }
+
+      function getDateFormat(d) {
+        return d3.utcFormat('%Y/%m/%d')(new Date(d))
+      }
+
+      /**
+       * Shared function to return date entries for the x-axis on a specific interval.
+       *
+       * @param d The date object to parse and format.
+       * @param i The index of the current date object in the date series.
+       */
+      function getDateAxisEntriesByInterval(d, i) {
+        if (i % 3 == 0) {
+          return getDateFormat(d);
+        }
+
+        return '';
       }
 
       /**
