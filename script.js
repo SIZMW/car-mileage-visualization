@@ -7,6 +7,9 @@ $(function () {
     left: 50
   };
 
+  // Bar size
+  var barWidth = 10;
+
   // Canvas size
   var canvasWidth = 800;
   var canvasHeight = 400;
@@ -298,7 +301,6 @@ $(function () {
           .attr('width', canvasWidth)
           .attr('height', canvasHeight);
 
-        var barWidth = 12;
         var percent = 0.025;
 
         // Axes scales
@@ -426,7 +428,6 @@ $(function () {
           .attr('width', canvasWidth)
           .attr('height', canvasHeight);
 
-        var barWidth = 12;
         var percent = 0.3;
 
         // Axes scales
