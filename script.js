@@ -8,7 +8,7 @@ $(function () {
   };
 
   // Bar size
-  var barWidth = 10;
+  var barWidth = 8;
 
   // Canvas size
   var canvasWidth = 800;
