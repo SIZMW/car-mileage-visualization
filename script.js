@@ -8,10 +8,10 @@ $(function () {
   };
 
   // Bar size
-  var barWidth = 8;
+  var barWidth = 5;
 
   // Canvas size
-  var canvasWidth = 800;
+  var canvasWidth = 1000;
   var canvasHeight = 400;
 
   // Colors for charts
