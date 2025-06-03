@@ -11,7 +11,7 @@ $(function () {
   var barWidth = 5;
 
   // Canvas size
-  var canvasWidth = 1000;
+  var canvasWidth = 1500;
   var canvasHeight = 400;
 
   // Colors for charts
